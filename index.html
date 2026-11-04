@@ -1,1 +1,1475 @@
-a
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e17">
+<title>Best Buy Deals</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --bg2: #111827;
+    --card: rgba(255,255,255,0.06);
+    --card-hover: rgba(255,255,255,0.11);
+    --text: #f1f5f9;
+    --text-dim: #94a3b8;
+    --accent: #ffd60a;
+    --accent2: #3b82f6;
+    --border: rgba(255,255,255,0.10);
+    --shadow: rgba(0,0,0,0.4);
+    --modal-bg: #0f172a;
+    --header-bg: rgba(10,14,23,0.85);
+    --nav-bg: rgba(10,14,23,0.94);
+    --success: #22c55e;
+  }
+  [data-theme="light"] {
+    --bg: #f8fafc;
+    --bg2: #eef2f7;
+    --card: rgba(255,255,255,0.85);
+    --card-hover: #ffffff;
+    --text: #0f172a;
+    --text-dim: #64748b;
+    --accent: #f59e0b;
+    --accent2: #2563eb;
+    --border: rgba(0,0,0,0.10);
+    --shadow: rgba(0,0,0,0.12);
+    --modal-bg: #ffffff;
+    --header-bg: rgba(248,250,252,0.88);
+    --nav-bg: rgba(248,250,252,0.96);
+    --success: #16a34a;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { min-height:100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background .4s ease, color .4s ease;
+    overflow-x:hidden;
+    min-height:100vh;
+    padding-bottom: 90px;
+  }
+
+  /* ---- Animated background ---- */
+  .bg-anim {
+    position: fixed; inset: 0; z-index: -1; overflow: hidden;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  }
+  .bg-anim::before, .bg-anim::after {
+    content:""; position:absolute; border-radius:50%;
+    filter: blur(90px); opacity:0.30;
+    animation: float 20s ease-in-out infinite;
+  }
+  .bg-anim::before {
+    width: 340px; height: 340px;
+    background: radial-gradient(circle, var(--accent), transparent 70%);
+    top: -100px; left: -100px;
+  }
+  .bg-anim::after {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, var(--accent2), transparent 70%);
+    bottom: -130px; right: -130px;
+    animation-delay: -10s;
+  }
+  .bg-blob3 {
+    position:absolute; width: 280px; height: 280px; border-radius:50%;
+    background: radial-gradient(circle, #8b5cf6, transparent 70%);
+    filter: blur(100px); opacity:0.18;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: float2 24s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(60px, 80px) scale(1.15); }
+  }
+  @keyframes float2 {
+    0%,100% { transform: translate(-50%,-50%) scale(1); }
+    50% { transform: translate(-30%,-70%) scale(1.2); }
+  }
+
+  /* ---- Header ---- */
+  header {
+    position: sticky; top:0; z-index: 50;
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1rem; }
+  .brand-logo {
+    width:36px; height:36px; border-radius:11px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display:grid; place-items:center; font-size:1.1rem;
+    box-shadow: 0 4px 18px rgba(245,158,11,0.35);
+  }
+  .brand-text { display:flex; flex-direction:column; line-height:1.1; }
+  .brand-text small { font-size:.65rem; color: var(--text-dim); font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
+  .brand-text b { color: var(--accent); }
+  .header-controls { display:flex; gap:6px; align-items:center; }
+  .icon-btn {
+    width:38px; height:38px; border-radius:11px;
+    border:1px solid var(--border); background: var(--card);
+    color: var(--text); font-size:1.05rem;
+    display:grid; place-items:center; cursor:pointer;
+    transition: transform .15s ease, background .2s ease;
+    line-height:1;
+  }
+  .icon-btn:active { transform: scale(0.9); }
+  .icon-btn:hover { background: var(--card-hover); }
+
+  /* ---- Pages ---- */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
+
+  /* ---- Hero ---- */
+  .hero {
+    padding: 34px 20px 20px;
+    text-align:center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero h1 {
+    font-size: clamp(1.5rem, 5vw, 2.3rem);
+    font-weight: 850; letter-spacing:-0.03em; line-height:1.15; margin-bottom: 10px;
+    background: linear-gradient(120deg, var(--text) 30%, var(--accent) 90%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p { color: var(--text-dim); font-size:.92rem; max-width: 520px; margin: 0 auto; line-height:1.55; }
+
+  /* ---- Container ---- */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 14px 40px; }
+  .section-title {
+    display:flex; align-items:center; gap:10px;
+    font-size:1.1rem; font-weight:800;
+    margin: 26px 2px 14px;
+  }
+  .section-title::before {
+    content:""; width:4px; height:18px; border-radius:4px;
+    background: linear-gradient(var(--accent), var(--accent2));
+  }
+
+  /* ---- Category list (full-width rows) ---- */
+  .cat-list { display:flex; flex-direction:column; gap: 9px; }
+  .cat-row {
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    text-decoration:none;
+    color: var(--text);
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    position:relative;
+  }
+  .cat-row:hover, .cat-row:active {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 22px var(--shadow);
+    background: var(--card-hover);
+  }
+  .cat-icon {
+    width:42px; height:42px; border-radius:12px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.22), rgba(59,130,246,0.22));
+    display:grid; place-items:center; font-size:1.25rem; flex-shrink:0;
+  }
+  .cat-name {
+    flex:1;
+    font-size:.92rem;
+    font-weight:700;
+    line-height:1.3;
+    min-width:0;
+  }
+  .cat-arrow {
+    color: var(--text-dim);
+    font-size:1rem;
+    opacity:.6;
+    flex-shrink:0;
+    margin-right: 4px;
+  }
+  .share-btn {
+    width:38px; height:38px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background: var(--card-hover);
+    color: var(--text);
+    font-size:1rem;
+    display:grid; place-items:center;
+    cursor:pointer;
+    flex-shrink:0;
+    transition: transform .15s ease, background .2s ease, border-color .2s ease;
+  }
+  .share-btn:hover { border-color: var(--accent2); }
+  .share-btn:active { transform: scale(0.88); }
+
+  /* ---- Promo page ---- */
+  .promo-empty {
+    text-align:center;
+    padding: 60px 20px;
+    background: var(--card);
+    border:1px dashed var(--border);
+    border-radius: 20px;
+    margin-top: 8px;
+  }
+  .promo-empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .promo-empty h3 { font-size:1.15rem; margin-bottom: 8px; color: var(--text); }
+  .promo-empty p { color: var(--text-dim); font-size:.9rem; line-height:1.6; max-width: 380px; margin: 0 auto; }
+  .promo-item {
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .promo-item h4 { font-size:.95rem; }
+  .promo-item p { color: var(--text-dim); font-size:.85rem; line-height:1.5; }
+  .promo-code-box {
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+    background: rgba(245,158,11,0.10);
+    border:1px dashed var(--accent);
+    border-radius: 12px;
+    padding: 12px 14px;
+    flex-wrap:wrap;
+  }
+  .promo-code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size:1.05rem;
+    font-weight:800;
+    color: var(--accent);
+    letter-spacing:.08em;
+    word-break:break-all;
+  }
+
+  /* ---- Info blocks ---- */
+  .info-block { margin-bottom: 26px; }
+  .info-block:last-child { margin-bottom: 0; }
+  .info-block-title {
+    display:flex; align-items:center; gap:8px;
+    font-size:1.05rem; font-weight:800; color: var(--text);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-block p {
+    color: var(--text-dim); font-size:.92rem; line-height:1.7;
+    margin-bottom: 10px;
+  }
+  .info-card {
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+  }
+
+  /* Rating */
+  .rating-card { text-align:center; }
+  .rating-card .sub { color: var(--text-dim); font-size:.88rem; margin-bottom:16px; }
+  .stars { display:flex; justify-content:center; gap:10px; font-size:2.2rem; line-height:1; margin: 4px 0 18px; }
+  .stars .star {
+    cursor:pointer; color: var(--text-dim);
+    transition: transform .15s ease, color .2s ease;
+    user-select:none; opacity:.5;
+  }
+  .stars .star.hovered, .stars .star.lit {
+    color: var(--accent); opacity:1;
+    text-shadow: 0 0 20px rgba(245,158,11,0.55);
+  }
+  .stars .star.hovered { transform: scale(1.18); }
+  .rate-btn {
+    display:inline-flex; align-items:center; gap:8px;
+    padding: 12px 24px; border-radius: 13px;
+    background: linear-gradient(135deg, var(--accent), #f59e0b);
+    color:#1a1a1a; font-weight:800; font-size:.9rem;
+    text-decoration:none; box-shadow: 0 8px 24px rgba(245,158,11,0.35);
+    transition: transform .15s ease;
+  }
+  .rate-btn:active { transform: scale(0.95); }
+
+  /* Contact */
+  .contact-row {
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .contact-left { display:flex; align-items:center; gap:10px; min-width:0; flex:1 1 160px; }
+  .contact-icon {
+    width:40px; height:40px; border-radius:11px;
+    background: linear-gradient(135deg, var(--accent2), #6366f1);
+    display:grid; place-items:center; font-size:1.1rem; flex-shrink:0;
+  }
+  .contact-mail {
+    font-size:.88rem; font-weight:700; color: var(--text);
+    text-decoration:none; word-break:break-all;
+  }
+  .contact-mail:hover { color: var(--accent); }
+  .copy-btn {
+    display:flex; align-items:center; gap:6px;
+    padding: 9px 14px; border-radius:10px;
+    border:1px solid var(--border); background: var(--card-hover);
+    color: var(--text); font-size:.78rem; font-weight:700;
+    cursor:pointer; transition: transform .15s ease, background .2s ease;
+  }
+  .copy-btn:active { transform: scale(0.93); }
+  .copy-btn.copied { background: var(--success); color:#fff; border-color: var(--success); }
+
+  /* Important */
+  .important-card {
+    border:1px solid rgba(245,158,11,0.45);
+    background: rgba(245,158,11,0.08);
+    border-radius:14px; padding: 16px;
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .important-icon { font-size:1.35rem; flex-shrink:0; animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); opacity:1; }
+    50% { transform: scale(1.12); opacity:.85; }
+  }
+  .important-card p { font-size:.88rem; line-height:1.6; color: var(--text); }
+  .important-card p b { color: var(--accent); }
+
+  /* Legal */
+  .legal-links { display:flex; gap:10px; flex-wrap:wrap; }
+  .legal-btn {
+    flex:1; min-width:130px; padding: 14px;
+    border-radius:12px; border:1px solid var(--border);
+    background: var(--card); color: var(--text);
+    font-weight:700; font-size:.85rem;
+    cursor:pointer;
+    transition: transform .15s ease, background .2s ease, border-color .2s ease;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .legal-btn:hover { background: var(--card-hover); border-color: var(--accent2); }
+  .legal-btn:active { transform: scale(0.97); }
+
+  /* ---- Bottom nav ---- */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left:0; right:0;
+    z-index: 55;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    background: var(--nav-bg);
+    border-top: 1px solid var(--border);
+    display:flex;
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+    justify-content:space-around;
+    align-items:center;
+  }
+  .nav-item {
+    flex:1;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding: 6px 4px;
+    background:none; border:none;
+    color: var(--text-dim);
+    font-size:.65rem; font-weight:600;
+    cursor:pointer;
+    transition: color .2s ease, transform .15s ease;
+    text-decoration:none;
+  }
+  .nav-item .nav-icon { font-size:1.25rem; line-height:1; }
+  .nav-item.active { color: var(--accent); }
+  .nav-item:active { transform: scale(0.92); }
+
+  /* ---- Settings ---- */
+  .settings-section { margin-bottom: 24px; }
+  .settings-section:last-child { margin-bottom: 0; }
+  .settings-label {
+    font-size:.8rem; font-weight:700; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing:.06em; margin-bottom: 10px;
+  }
+  .theme-toggle-row {
+    display:flex; align-items:center; justify-content:space-between;
+    background: var(--card); border:1px solid var(--border);
+    border-radius: 14px; padding: 14px 16px;
+  }
+  .theme-toggle-row span { font-size:.9rem; font-weight:700; }
+  .theme-switch {
+    position: relative; width: 56px; height: 32px;
+    background: var(--card-hover); border:1px solid var(--border);
+    border-radius: 999px; cursor:pointer;
+    transition: background .25s ease; flex-shrink:0;
+  }
+  .theme-switch::after {
+    content:""; position:absolute; top: 3px; left: 3px;
+    width: 24px; height: 24px; border-radius:50%;
+    background: var(--accent);
+    transition: transform .25s cubic-bezier(.4,0,.2,1);
+  }
+  .theme-switch.on { background: var(--accent2); }
+  .theme-switch.on::after { transform: translateX(24px); background: #fff; }
+
+  .lang-grid {
+    display:grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+  }
+  .lang-option {
+    display:flex; align-items:center; gap: 10px;
+    padding: 12px 14px; border-radius: 12px;
+    border:1px solid var(--border); background: var(--card);
+    color: var(--text); font-size:.85rem; font-weight:600;
+    cursor:pointer; transition: all .18s ease; text-align:left;
+  }
+  .lang-option:active { transform: scale(0.96); }
+  .lang-option.active {
+    border-color: var(--accent);
+    background: rgba(245,158,11,0.10);
+    color: var(--accent); font-weight:800;
+  }
+  .lang-option .flag { font-size:1.15rem; line-height:1; }
+
+  /* ---- Modal ---- */
+  .modal-overlay {
+    position: fixed; inset:0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    z-index: 100; display:none;
+    align-items:center; justify-content:center;
+    padding: 14px;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background: var(--modal-bg);
+    border:1px solid var(--border);
+    border-radius: 20px;
+    max-width: 600px; width:100%;
+    max-height: 86vh;
+    display:flex; flex-direction:column;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    animation: modalIn .28s ease;
+  }
+  @keyframes modalIn { from { transform: scale(0.94) translateY(16px); opacity:0; } to { transform:none; opacity:1; } }
+  .modal-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 18px; border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+  .modal-head h2 { font-size:1.05rem; }
+  .modal-close {
+    width:34px; height:34px; border-radius:10px;
+    border:1px solid var(--border); background: var(--card);
+    color: var(--text); font-size:1rem;
+    cursor:pointer; display:grid; place-items:center; flex-shrink:0;
+  }
+  .modal-close:active { transform: scale(0.9); }
+  .modal-body {
+    padding: 18px; overflow-y:auto;
+    font-size:.9rem; line-height:1.7; color: var(--text-dim);
+  }
+  .modal-body h4 { color: var(--text); margin: 14px 0 6px; font-size:.92rem; }
+  .modal-body h4:first-child { margin-top:0; }
+  .modal-body p { margin-bottom: 10px; }
+  .modal-body ul { margin: 8px 0 12px 20px; }
+  .modal-body li { margin-bottom: 5px; }
+  .modal-body strong { color: var(--text); }
+
+  /* ---- Toast ---- */
+  .toast {
+    position: fixed; bottom: 95px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--success); color:#fff;
+    padding: 12px 22px; border-radius: 12px;
+    font-size:.85rem; font-weight:700;
+    box-shadow: 0 10px 30px rgba(34,197,94,0.4);
+    z-index: 200; opacity:0;
+    transition: all .3s ease;
+    pointer-events:none;
+    max-width: 85vw;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity:1; }
+
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius:10px; }
+</style>
+</head>
+<body>
+
+<div class="bg-anim"><div class="bg-blob3"></div></div>
+
+<header>
+  <div class="brand">
+    <div class="brand-logo">🛒</div>
+    <div class="brand-text">
+      <small>Daa Studio</small>
+      <span>Best Buy <b>Deals</b></span>
+    </div>
+  </div>
+  <div class="header-controls">
+    <button class="icon-btn" id="settingsBtn" aria-label="Settings">⚙️</button>
+  </div>
+</header>
+
+<!-- ============ HOME PAGE ============ -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <h1 data-i18n="heroTitle">Best Buy Deals, One Tap Away</h1>
+    <p data-i18n="heroSub">Browse categories and never miss the best deals. Shop directly from Best Buy.</p>
+  </section>
+
+  <div class="container">
+    <div class="section-title" data-i18n="categories">Categories</div>
+    <div class="cat-list" id="catList"></div>
+  </div>
+</div>
+
+<!-- ============ PROMO CODES PAGE ============ -->
+<div class="page" id="page-promo">
+  <section class="hero">
+    <h1 data-i18n="promoTitle">Promo Codes</h1>
+    <p data-i18n="promoSub">Exclusive promo codes for Best Buy deals. Check back soon!</p>
+  </section>
+
+  <div class="container">
+    <div class="section-title" data-i18n="promoActive">Active Promo Codes</div>
+    <div id="promoList"></div>
+  </div>
+</div>
+
+<!-- ============ INFO PAGE ============ -->
+<div class="page" id="page-info">
+  <section class="hero">
+    <h1 data-i18n="infoPageTitle">About & Info</h1>
+    <p data-i18n="infoPageSub">Learn more about the app and get in touch.</p>
+  </section>
+
+  <div class="container">
+
+    <div class="info-block">
+      <div class="info-block-title">📱 <span data-i18n="infoSectionTitle">App Purpose</span></div>
+      <div class="info-card">
+        <p data-i18n="infoText">This app was developed to give you quick access to Best Buy products and to bring you the latest deals through affiliate links. Our goal is to simplify your shopping experience and deliver the best offers from a single place.</p>
+        <p data-i18n="infoShareText">Share campaigns with your friends and enjoy discounts together! The more people you share with, the more deals everyone can benefit from.</p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title">⭐ <span data-i18n="rateTitle">Rate the App</span></div>
+      <div class="info-card rating-card">
+        <p class="sub" data-i18n="rateSub">If you like our app, give us 5 stars on Google Play!</p>
+        <div class="stars" id="stars">
+          <span class="star" data-v="1">★</span>
+          <span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span>
+          <span class="star" data-v="4">★</span>
+          <span class="star" data-v="5">★</span>
+        </div>
+        <a class="rate-btn" href="https://play.google.com/store/apps/details?id=com.DaaStudio.BestBuyAffiliate" target="_blank" rel="noopener">
+          <span>▶</span> <span data-i18n="rateBtn">Rate on Google Play</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title">✉️ <span data-i18n="contactTitle">Contact</span></div>
+      <div class="info-card">
+        <div class="contact-row">
+          <div class="contact-left">
+            <div class="contact-icon">✉️</div>
+            <a class="contact-mail" href="mailto:daastudio42@gmail.com">daastudio42@gmail.com</a>
+          </div>
+          <button class="copy-btn" id="copyBtn" type="button">📋 <span data-i18n="copy">Copy</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title">⚠️ <span data-i18n="importantTitle">Important</span></div>
+      <div class="important-card">
+        <div class="important-icon">⚠️</div>
+        <p><b data-i18n="importantBold">Keep the app always up to date.</b> <span data-i18n="importantText">Deals and links are regularly updated. Make sure you are using the latest version.</span></p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title">📄 <span data-i18n="legalTitle">Legal</span></div>
+      <div class="legal-links">
+        <button class="legal-btn" type="button" data-modal="privacy">🔒 <span data-i18n="privacy">Privacy Policy</span></button>
+        <button class="legal-btn" type="button" data-modal="terms">📄 <span data-i18n="terms">Terms & Conditions</span></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <button class="nav-item active" type="button" data-page="home">
+    <span class="nav-icon">🏠</span>
+    <span data-i18n="navHome">Home</span>
+  </button>
+  <button class="nav-item" type="button" data-page="promo">
+    <span class="nav-icon">🎟️</span>
+    <span data-i18n="navPromo">Promo Codes</span>
+  </button>
+  <button class="nav-item" type="button" data-page="info">
+    <span class="nav-icon">ℹ️</span>
+    <span data-i18n="navInfo">Info</span>
+  </button>
+</nav>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 data-i18n="settingsTitle">Settings</h2>
+      <button class="modal-close" type="button" data-close="settings">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="settings-section">
+        <div class="settings-label" data-i18n="appearance">Appearance</div>
+        <div class="theme-toggle-row">
+          <span data-i18n="darkMode">Dark Mode</span>
+          <div class="theme-switch" id="themeSwitch"></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-label" data-i18n="language">Language</div>
+        <div class="lang-grid" id="langGrid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ PRIVACY MODAL ============ -->
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 data-i18n="privacy">Privacy Policy</h2>
+      <button class="modal-close" type="button" data-close="privacy">✕</button>
+    </div>
+    <div class="modal-body" id="privacyBody"></div>
+  </div>
+</div>
+
+<!-- ============ TERMS MODAL ============ -->
+<div class="modal-overlay" id="termsModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 data-i18n="terms">Terms & Conditions</h2>
+      <button class="modal-close" type="button" data-close="terms">✕</button>
+    </div>
+    <div class="modal-body" id="termsBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============ CATEGORY DATA ============ */
+  var CATEGORIES = [
+    { name: "Home", icon: "🏠", url: "https://bestbuy.7tiv.net/zN9e60" },
+    { name: "Best Buy Outlet", icon: "🏷️", url: "https://bestbuy.7tiv.net/5g7Qxj" },
+    { name: "Deal of the Day", icon: "🔥", url: "https://bestbuy.7tiv.net/DKkg1j" },
+    { name: "Gift Cards", icon: "🎁", url: "https://bestbuy.7tiv.net/eKAMbr" },
+    { name: "Gift Ideas", icon: "💡", url: "https://bestbuy.7tiv.net/jrO3B5" },
+    { name: "My Best Buy Memberships", icon: "⭐", url: "https://bestbuy.7tiv.net/rQ23BQ" },
+    { name: "Top Deals", icon: "🏆", url: "https://bestbuy.7tiv.net/LXZqrj" },
+    { name: "Yes Best Buy Sells That", icon: "🛍️", url: "https://bestbuy.7tiv.net/eKPAoO" },
+    { name: "Apple", icon: "🍎", url: "https://bestbuy.7tiv.net/LX3m4V" },
+    { name: "Cameras - Camcorders", icon: "📷", url: "https://bestbuy.7tiv.net/PyNVRR" },
+    { name: "Cell Phones", icon: "📱", url: "https://bestbuy.7tiv.net/DKzen5" },
+    { name: "Electric Transportation", icon: "🛴", url: "https://bestbuy.7tiv.net/2195yA" },
+    { name: "Exclusive Member Deals", icon: "💎", url: "https://bestbuy.7tiv.net/5gPZYb" },
+    { name: "Floor Care - Home Air Quality", icon: "🧹", url: "https://bestbuy.7tiv.net/0ZDjyN" },
+    { name: "Headphones", icon: "🎧", url: "https://bestbuy.7tiv.net/jrAyZM" },
+    { name: "Laptops - Computers", icon: "💻", url: "https://bestbuy.7tiv.net/EKveJW" },
+    { name: "Major Appliances", icon: "🔌", url: "https://bestbuy.7tiv.net/m5VEZ7" },
+    { name: "PC Gaming", icon: "🎮", url: "https://bestbuy.7tiv.net/eKPEe1" },
+    { name: "Small Kitchen Appliances", icon: "🍳", url: "https://bestbuy.7tiv.net/1rQPyz" },
+    { name: "Smart Home - Security - Wi-Fi", icon: "🏡", url: "https://bestbuy.7tiv.net/oqZL5W" },
+    { name: "Sound Bars - Speakers", icon: "🔊", url: "https://bestbuy.7tiv.net/zN23D6" },
+    { name: "Tablets", icon: "📲", url: "https://bestbuy.7tiv.net/DKzeOb" },
+    { name: "Toys - Games - Collectibles", icon: "🧸", url: "https://bestbuy.7tiv.net/vNqjQL" },
+    { name: "TVs - Projectors", icon: "📺", url: "https://bestbuy.7tiv.net/2195M0" },
+    { name: "Video Games - VR", icon: "🕹️", url: "https://bestbuy.7tiv.net/75kOoY" },
+    { name: "Wearable Technology", icon: "⌚", url: "https://bestbuy.7tiv.net/anQAjY" }
+  ];
+
+  /* ============ PROMO CODES ============ */
+  var PROMO_CODES = [];
+
+  /* ============ LANGUAGES ============ */
+  var LANGS = [
+    { code: "en", label: "English", flag: "🇬🇧" },
+    { code: "tr", label: "Türkçe", flag: "🇹🇷" },
+    { code: "es", label: "Español", flag: "🇪🇸" },
+    { code: "de", label: "Deutsch", flag: "🇩🇪" },
+    { code: "fr", label: "Français", flag: "🇫🇷" },
+    { code: "it", label: "Italiano", flag: "🇮🇹" },
+    { code: "pt", label: "Português", flag: "🇵🇹" },
+    { code: "ja", label: "日本語", flag: "🇯🇵" },
+    { code: "ko", label: "한국어", flag: "🇰🇷" },
+    { code: "zh", label: "中文", flag: "🇨🇳" }
+  ];
+
+  /* ============ TRANSLATIONS (UI) ============ */
+  var I18N = {
+    en: {
+      heroTitle: "Best Buy Deals, One Tap Away",
+      heroSub: "Browse categories and never miss the best deals. Shop directly from Best Buy.",
+      categories: "Categories",
+      navHome: "Home",
+      navPromo: "Promo Codes",
+      navInfo: "Info",
+      promoTitle: "Promo Codes",
+      promoSub: "Exclusive promo codes for Best Buy deals. Check back soon!",
+      promoActive: "Active Promo Codes",
+      promoEmptyTitle: "No Promo Codes Yet",
+      promoEmptyText: "We don't have any promo codes right now. Stay tuned — new codes are coming soon!",
+      infoPageTitle: "About & Info",
+      infoPageSub: "Learn more about the app and get in touch.",
+      infoSectionTitle: "App Purpose",
+      infoText: "This app was developed to give you quick access to Best Buy products and to bring you the latest deals through affiliate links. Our goal is to simplify your shopping experience and deliver the best offers from a single place.",
+      infoShareText: "Share campaigns with your friends and enjoy discounts together! The more people you share with, the more deals everyone can benefit from.",
+      rateTitle: "Rate the App",
+      rateSub: "If you like our app, give us 5 stars on Google Play!",
+      rateBtn: "Rate on Google Play",
+      contactTitle: "Contact",
+      copy: "Copy",
+      importantTitle: "Important",
+      importantBold: "Keep the app always up to date.",
+      importantText: "Deals and links are regularly updated. Make sure you are using the latest version.",
+      legalTitle: "Legal",
+      privacy: "Privacy Policy",
+      terms: "Terms & Conditions",
+      settingsTitle: "Settings",
+      appearance: "Appearance",
+      darkMode: "Dark Mode",
+      language: "Language",
+      copied: "Copied!",
+      shareCopied: "Link copied! You can share it with your friends.",
+      shareTitle: "Share",
+      promoCopy: "Copy Code"
+    },
+    tr: {
+      heroTitle: "Best Buy Fırsatlarına Tek Dokunuşla Ulaşın",
+      heroSub: "Kategorilere göz atın, en iyi fırsatları kaçırmayın. Doğrudan Best Buy'dan alışveriş yapın.",
+      categories: "Kategoriler",
+      navHome: "Ana Sayfa",
+      navPromo: "Promosyon Kodları",
+      navInfo: "Bilgi",
+      promoTitle: "Promosyon Kodları",
+      promoSub: "Best Buy fırsatları için özel promosyon kodları. Yakında tekrar kontrol edin!",
+      promoActive: "Aktif Promosyon Kodları",
+      promoEmptyTitle: "Henüz Promosyon Kodu Yok",
+      promoEmptyText: "Şu anda promosyon kodumuz bulunmuyor. Yakında gelecek — takipte kalın!",
+      infoPageTitle: "Hakkında & Bilgi",
+      infoPageSub: "Uygulama hakkında daha fazla bilgi edinin ve bizimle iletişime geçin.",
+      infoSectionTitle: "Uygulama Amacı",
+      infoText: "Bu uygulama, Best Buy ürünlerine hızlı erişim sağlamak ve en güncel fırsatları affiliate linkler aracılığıyla sizlere sunmak amacıyla geliştirilmiştir. Amacımız, alışveriş deneyiminizi kolaylaştırmak ve size en iyi teklifleri tek bir yerden ulaştırmaktır.",
+      infoShareText: "Arkadaşlarınızla kampanyaları paylaşabilir, hep beraber indirimlerden yararlanabilirsiniz! Ne kadar çok kişiyle paylaşırsanız, o kadar çok kişi fırsatlardan faydalanır.",
+      rateTitle: "Uygulamaya Oy Ver",
+      rateSub: "Uygulamamızı beğendiyseniz Google Play'de 5 yıldız verin!",
+      rateBtn: "Google Play'de Oyla",
+      contactTitle: "İletişim",
+      copy: "Kopyala",
+      importantTitle: "Önemli",
+      importantBold: "Uygulamayı sürekli güncel tutunuz.",
+      importantText: "Fırsatlar ve linkler düzenli olarak güncellenmektedir. En son sürümü kullandığınızdan emin olun.",
+      legalTitle: "Yasal",
+      privacy: "Gizlilik Politikası",
+      terms: "Kullanım Şartları",
+      settingsTitle: "Ayarlar",
+      appearance: "Görünüm",
+      darkMode: "Karanlık Mod",
+      language: "Dil",
+      copied: "Kopyalandı!",
+      shareCopied: "Link kopyalandı! Arkadaşlarınızla paylaşabilirsiniz.",
+      shareTitle: "Paylaş",
+      promoCopy: "Kodu Kopyala"
+    },
+    es: {
+      heroTitle: "Ofertas de Best Buy a un Toque",
+      heroSub: "Explora categorías y no te pierdas las mejores ofertas. Compra directamente en Best Buy.",
+      categories: "Categorías",
+      navHome: "Inicio",
+      navPromo: "Códigos Promo",
+      navInfo: "Info",
+      promoTitle: "Códigos Promocionales",
+      promoSub: "Códigos promocionales exclusivos para ofertas de Best Buy. ¡Vuelve pronto!",
+      promoActive: "Códigos Promocionales Activos",
+      promoEmptyTitle: "Aún No Hay Códigos Promocionales",
+      promoEmptyText: "No tenemos códigos promocionales en este momento. ¡Mantente atento — nuevos códigos llegarán pronto!",
+      infoPageTitle: "Acerca & Info",
+      infoPageSub: "Conoce más sobre la app y ponte en contacto.",
+      infoSectionTitle: "Propósito de la App",
+      infoText: "Esta app fue desarrollada para darte acceso rápido a los productos de Best Buy y traerte las mejores ofertas a través de enlaces de afiliado. Nuestro objetivo es simplificar tu experiencia de compra y ofrecerte las mejores ofertas desde un solo lugar.",
+      infoShareText: "¡Comparte las campañas con tus amigos y disfruten de los descuentos juntos! Cuantas más personas compartas, más gente podrá beneficiarse de las ofertas.",
+      rateTitle: "Valora la App",
+      rateSub: "Si te gusta nuestra app, ¡danos 5 estrellas en Google Play!",
+      rateBtn: "Valorar en Google Play",
+      contactTitle: "Contacto",
+      copy: "Copiar",
+      importantTitle: "Importante",
+      importantBold: "Mantén la app siempre actualizada.",
+      importantText: "Las ofertas y enlaces se actualizan regularmente. Asegúrate de usar la última versión.",
+      legalTitle: "Legal",
+      privacy: "Política de Privacidad",
+      terms: "Términos y Condiciones",
+      settingsTitle: "Ajustes",
+      appearance: "Apariencia",
+      darkMode: "Modo Oscuro",
+      language: "Idioma",
+      copied: "¡Copiado!",
+      shareCopied: "¡Enlace copiado! Puedes compartirlo con tus amigos.",
+      shareTitle: "Compartir",
+      promoCopy: "Copiar Código"
+    },
+    de: {
+      heroTitle: "Best Buy Angebote mit einem Tipp",
+      heroSub: "Durchstöbere Kategorien und verpasse keine Top-Angebote. Kaufe direkt bei Best Buy.",
+      categories: "Kategorien",
+      navHome: "Start",
+      navPromo: "Promo-Codes",
+      navInfo: "Info",
+      promoTitle: "Promo-Codes",
+      promoSub: "Exklusive Promo-Codes für Best Buy-Angebote. Schau bald wieder vorbei!",
+      promoActive: "Aktive Promo-Codes",
+      promoEmptyTitle: "Noch Keine Promo-Codes",
+      promoEmptyText: "Wir haben derzeit keine Promo-Codes. Bleib dran — neue Codes kommen bald!",
+      infoPageTitle: "Über & Info",
+      infoPageSub: "Erfahre mehr über die App und kontaktiere uns.",
+      infoSectionTitle: "Zweck der App",
+      infoText: "Diese App wurde entwickelt, um dir schnellen Zugriff auf Best Buy-Produkte zu ermöglichen und dir die neuesten Angebote über Affiliate-Links zu präsentieren. Unser Ziel ist es, dein Einkaufserlebnis zu vereinfachen und dir die besten Angebote an einem Ort zu bieten.",
+      infoShareText: "Teile Kampagnen mit deinen Freunden und genießt die Rabatte gemeinsam! Je mehr Menschen du teilst, desto mehr können von den Angeboten profitieren.",
+      rateTitle: "App Bewerten",
+      rateSub: "Wenn dir unsere App gefällt, gib uns 5 Sterne auf Google Play!",
+      rateBtn: "Auf Google Play Bewerten",
+      contactTitle: "Kontakt",
+      copy: "Kopieren",
+      importantTitle: "Wichtig",
+      importantBold: "Halte die App immer aktuell.",
+      importantText: "Angebote und Links werden regelmäßig aktualisiert. Stelle sicher, dass du die neueste Version verwendest.",
+      legalTitle: "Rechtliches",
+      privacy: "Datenschutzrichtlinie",
+      terms: "AGB",
+      settingsTitle: "Einstellungen",
+      appearance: "Erscheinungsbild",
+      darkMode: "Dunkelmodus",
+      language: "Sprache",
+      copied: "Kopiert!",
+      shareCopied: "Link kopiert! Du kannst ihn mit deinen Freunden teilen.",
+      shareTitle: "Teilen",
+      promoCopy: "Code Kopieren"
+    },
+    fr: {
+      heroTitle: "Offres Best Buy à Portée de Main",
+      heroSub: "Parcourez les catégories et ne manquez pas les meilleures offres. Achetez directement sur Best Buy.",
+      categories: "Catégories",
+      navHome: "Accueil",
+      navPromo: "Codes Promo",
+      navInfo: "Info",
+      promoTitle: "Codes Promotionnels",
+      promoSub: "Codes promo exclusifs pour les offres Best Buy. Revenez bientôt !",
+      promoActive: "Codes Promo Actifs",
+      promoEmptyTitle: "Pas Encore de Codes Promo",
+      promoEmptyText: "Nous n'avons pas de codes promo pour le moment. Restez à l'écoute — de nouveaux codes arrivent bientôt !",
+      infoPageTitle: "À Propos & Info",
+      infoPageSub: "En savoir plus sur l'app et nous contacter.",
+      infoSectionTitle: "Objectif de l'App",
+      infoText: "Cette application a été développée pour vous donner un accès rapide aux produits Best Buy et vous apporter les meilleures offres via des liens d'affiliation. Notre objectif est de simplifier votre expérience d'achat et de vous offrir les meilleures offres depuis un seul endroit.",
+      infoShareText: "Partagez les campagnes avec vos amis et profitez des réductions ensemble ! Plus vous partagez avec de personnes, plus de gens peuvent bénéficier des offres.",
+      rateTitle: "Noter l'App",
+      rateSub: "Si vous aimez notre app, donnez-nous 5 étoiles sur Google Play !",
+      rateBtn: "Noter sur Google Play",
+      contactTitle: "Contact",
+      copy: "Copier",
+      importantTitle: "Important",
+      importantBold: "Gardez l'app toujours à jour.",
+      importantText: "Les offres et les liens sont régulièrement mis à jour. Assurez-vous d'utiliser la dernière version.",
+      legalTitle: "Mentions Légales",
+      privacy: "Politique de Confidentialité",
+      terms: "Conditions d'Utilisation",
+      settingsTitle: "Paramètres",
+      appearance: "Apparence",
+      darkMode: "Mode Sombre",
+      language: "Langue",
+      copied: "Copié !",
+      shareCopied: "Lien copié ! Vous pouvez le partager avec vos amis.",
+      shareTitle: "Partager",
+      promoCopy: "Copier le Code"
+    },
+    it: {
+      heroTitle: "Offerte Best Buy a Portata di Tap",
+      heroSub: "Sfoglia le categorie e non perdere le migliori offerte. Acquista direttamente su Best Buy.",
+      categories: "Categorie",
+      navHome: "Home",
+      navPromo: "Codici Promo",
+      navInfo: "Info",
+      promoTitle: "Codici Promozionali",
+      promoSub: "Codici promo esclusivi per le offerte Best Buy. Torna presto!",
+      promoActive: "Codici Promo Attivi",
+      promoEmptyTitle: "Ancora Nessun Codice Promo",
+      promoEmptyText: "Al momento non abbiamo codici promo. Resta sintonizzato — nuovi codici in arrivo!",
+      infoPageTitle: "Informazioni & Info",
+      infoPageSub: "Scopri di più sull'app e contattaci.",
+      infoSectionTitle: "Scopo dell'App",
+      infoText: "Questa app è stata sviluppata per darti accesso rapido ai prodotti Best Buy e portarti le migliori offerte tramite link di affiliazione. Il nostro obiettivo è semplificare la tua esperienza di acquisto e offrirti le migliori offerte da un unico posto.",
+      infoShareText: "Condividi le campagne con i tuoi amici e godetevi gli sconti insieme! Più persone condividi, più persone possono beneficiare delle offerte.",
+      rateTitle: "Valuta l'App",
+      rateSub: "Se ti piace la nostra app, dacci 5 stelle su Google Play!",
+      rateBtn: "Valuta su Google Play",
+      contactTitle: "Contatti",
+      copy: "Copia",
+      importantTitle: "Importante",
+      importantBold: "Mantieni l'app sempre aggiornata.",
+      importantText: "Le offerte e i link vengono aggiornati regolarmente. Assicurati di utilizzare la versione più recente.",
+      legalTitle: "Legale",
+      privacy: "Informativa sulla Privacy",
+      terms: "Termini e Condizioni",
+      settingsTitle: "Impostazioni",
+      appearance: "Aspetto",
+      darkMode: "Modalità Scura",
+      language: "Lingua",
+      copied: "Copiato!",
+      shareCopied: "Link copiato! Puoi condividerlo con i tuoi amici.",
+      shareTitle: "Condividi",
+      promoCopy: "Copia Codice"
+    },
+    pt: {
+      heroTitle: "Ofertas Best Buy a Um Toque",
+      heroSub: "Explore categorias e não perca as melhores ofertas. Compre diretamente na Best Buy.",
+      categories: "Categorias",
+      navHome: "Início",
+      navPromo: "Códigos Promo",
+      navInfo: "Info",
+      promoTitle: "Códigos Promocionais",
+      promoSub: "Códigos promocionais exclusivos para ofertas Best Buy. Volte em breve!",
+      promoActive: "Códigos Promo Ativos",
+      promoEmptyTitle: "Ainda Sem Códigos Promo",
+      promoEmptyText: "Não temos códigos promocionais no momento. Fique ligado — novos códigos em breve!",
+      infoPageTitle: "Sobre & Info",
+      infoPageSub: "Saiba mais sobre o app e entre em contato.",
+      infoSectionTitle: "Objetivo do App",
+      infoText: "Este app foi desenvolvido para dar acesso rápido aos produtos Best Buy e trazer as melhores ofertas por meio de links de afiliado. Nosso objetivo é simplificar sua experiência de compra e oferecer as melhores ofertas de um só lugar.",
+      infoShareText: "Compartilhe as campanhas com seus amigos e aproveitem os descontos juntos! Quanto mais pessoas você compartilhar, mais gente pode se beneficiar das ofertas.",
+      rateTitle: "Avalie o App",
+      rateSub: "Se você gosta do nosso app, nos dê 5 estrelas no Google Play!",
+      rateBtn: "Avaliar no Google Play",
+      contactTitle: "Contato",
+      copy: "Copiar",
+      importantTitle: "Importante",
+      importantBold: "Mantenha o app sempre atualizado.",
+      importantText: "Ofertas e links são atualizados regularmente. Certifique-se de usar a versão mais recente.",
+      legalTitle: "Legal",
+      privacy: "Política de Privacidade",
+      terms: "Termos e Condições",
+      settingsTitle: "Configurações",
+      appearance: "Aparência",
+      darkMode: "Modo Escuro",
+      language: "Idioma",
+      copied: "Copiado!",
+      shareCopied: "Link copiado! Você pode compartilhá-lo com seus amigos.",
+      shareTitle: "Compartilhar",
+      promoCopy: "Copiar Código"
+    },
+    ja: {
+      heroTitle: "Best Buyのお得情報をワンタップで",
+      heroSub: "カテゴリを閲覧して、最高のお得情報を見逃さないでください。Best Buyで直接お買い物。",
+      categories: "カテゴリ",
+      navHome: "ホーム",
+      navPromo: "プロモコード",
+      navInfo: "情報",
+      promoTitle: "プロモコード",
+      promoSub: "Best Buyのお得情報のための限定プロモコード。近日公開！",
+      promoActive: "有効なプロモコード",
+      promoEmptyTitle: "プロモコードはまだありません",
+      promoEmptyText: "現在プロモコードはありません。お楽しみに — 新しいコードが近日登場！",
+      infoPageTitle: "アプリについて",
+      infoPageSub: "アプリについて詳しく知り、お問い合わせください。",
+      infoSectionTitle: "アプリの目的",
+      infoText: "このアプリは、Best Buyの製品に素早くアクセスし、アフィリエイトリンクを通じて最新のお得情報をお届けするために開発されました。私たちの目標は、ショッピング体験を簡素化し、最高のオファーを一か所から提供することです。",
+      infoShareText: "キャンペーンを友達と共有して、一緒に割引を楽しみましょう！より多くの人と共有するほど、より多くの人がお得情報を利用できます。",
+      rateTitle: "アプリを評価",
+      rateSub: "アプリが気に入ったら、Google Playで5つ星をお願いします！",
+      rateBtn: "Google Playで評価",
+      contactTitle: "お問い合わせ",
+      copy: "コピー",
+      importantTitle: "重要",
+      importantBold: "アプリを常に最新の状態に保ってください。",
+      importantText: "お得情報とリンクは定期的に更新されます。最新バージョンを使用していることを確認してください。",
+      legalTitle: "法的情報",
+      privacy: "プライバシーポリシー",
+      terms: "利用規約",
+      settingsTitle: "設定",
+      appearance: "外観",
+      darkMode: "ダークモード",
+      language: "言語",
+      copied: "コピーしました！",
+      shareCopied: "リンクをコピーしました！友達と共有できます。",
+      shareTitle: "共有",
+      promoCopy: "コードをコピー"
+    },
+    ko: {
+      heroTitle: "한 번의 탭으로 Best Buy 할인",
+      heroSub: "카테고리를 둘러보고 최고의 할인을 놓치지 마세요. Best Buy에서 직접 쇼핑하세요.",
+      categories: "카테고리",
+      navHome: "홈",
+      navPromo: "프로모 코드",
+      navInfo: "정보",
+      promoTitle: "프로모 코드",
+      promoSub: "Best Buy 할인을 위한 독점 프로모 코드. 곧 다시 확인하세요!",
+      promoActive: "활성 프로모 코드",
+      promoEmptyTitle: "아직 프로모 코드가 없습니다",
+      promoEmptyText: "현재 프로모 코드가 없습니다. 기대해 주세요 — 곧 새로운 코드가 나옵니다!",
+      infoPageTitle: "정보 & 안내",
+      infoPageSub: "앱에 대해 자세히 알아보고 문의하세요.",
+      infoSectionTitle: "앱 목적",
+      infoText: "이 앱은 Best Buy 제품에 빠르게 액세스하고 제휴 링크를 통해 최신 할인 정보를 제공하기 위해 개발되었습니다. 우리의 목표는 쇼핑 경험을 단순화하고 최고의 혜택을 한 곳에서 제공하는 것입니다.",
+      infoShareText: "친구들과 캠페인을 공유하고 함께 할인을 즐기세요! 더 많은 사람과 공유할수록 더 많은 사람이 혜택을 받을 수 있습니다.",
+      rateTitle: "앱 평가하기",
+      rateSub: "앱이 마음에 드시면 Google Play에서 별 5개를 주세요!",
+      rateBtn: "Google Play에서 평가",
+      contactTitle: "연락처",
+      copy: "복사",
+      importantTitle: "중요",
+      importantBold: "앱을 항상 최신 상태로 유지하세요.",
+      importantText: "할인 및 링크는 정기적으로 업데이트됩니다. 최신 버전을 사용하고 있는지 확인하세요.",
+      legalTitle: "법적 고지",
+      privacy: "개인정보 처리방침",
+      terms: "이용약관",
+      settingsTitle: "설정",
+      appearance: "화면",
+      darkMode: "다크 모드",
+      language: "언어",
+      copied: "복사됨!",
+      shareCopied: "링크가 복사되었습니다! 친구들과 공유할 수 있습니다.",
+      shareTitle: "공유",
+      promoCopy: "코드 복사"
+    },
+    zh: {
+      heroTitle: "一键获取 Best Buy 优惠",
+      heroSub: "浏览分类，不错过最佳优惠。直接在 Best Buy 购物。",
+      categories: "分类",
+      navHome: "首页",
+      navPromo: "优惠码",
+      navInfo: "信息",
+      promoTitle: "优惠码",
+      promoSub: "Best Buy 优惠专属优惠码。敬请期待！",
+      promoActive: "有效优惠码",
+      promoEmptyTitle: "暂无优惠码",
+      promoEmptyText: "我们目前没有优惠码。敬请关注 — 新优惠码即将推出！",
+      infoPageTitle: "关于 & 信息",
+      infoPageSub: "了解更多关于应用的信息并联系我们。",
+      infoSectionTitle: "应用目的",
+      infoText: "此应用旨在让您快速访问 Best Buy 产品，并通过联盟链接为您带来最新优惠。我们的目标是简化您的购物体验，从一个地方为您提供最佳优惠。",
+      infoShareText: "与朋友分享活动，一起享受折扣！您分享的人越多，受益的人就越多。",
+      rateTitle: "为应用评分",
+      rateSub: "如果您喜欢我们的应用，请在 Google Play 上给我们 5 星！",
+      rateBtn: "在 Google Play 上评分",
+      contactTitle: "联系",
+      copy: "复制",
+      importantTitle: "重要",
+      importantBold: "请始终保持应用为最新版本。",
+      importantText: "优惠和链接会定期更新。请确保您使用的是最新版本。",
+      legalTitle: "法律",
+      privacy: "隐私政策",
+      terms: "条款和条件",
+      settingsTitle: "设置",
+      appearance: "外观",
+      darkMode: "深色模式",
+      language: "语言",
+      copied: "已复制！",
+      shareCopied: "链接已复制！您可以与朋友分享。",
+      shareTitle: "分享",
+      promoCopy: "复制代码"
+    }
+  };
+
+  /* ============ PRIVACY POLICY (localized) ============ */
+  var PRIVACY = {
+    en: [
+      "<p><strong>Privacy Policy</strong></p>",
+      "<p>Daa Studio built the BestBuy Affiliate Marketing app as a free app. This SERVICE is provided by Daa Studio at no cost and is intended for use as is.</p>",
+      "<p>This page is used to inform visitors regarding our policies with the collection, use, and disclosure of Personal Information if anyone decided to use our Service.</p>",
+      "<p>If you choose to use our Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that we collect is used for providing and improving the Service. We will not use or share your information with anyone except as described in this Privacy Policy.</p>",
+      "<p>The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which is accessible at BestBuy Affiliate Marketing unless otherwise defined in this Privacy Policy.</p>",
+      "<h4>Information Collection and Use</h4>",
+      "<p>For a better experience, while using our Service, we may require you to provide us with certain personally identifiable information. The information that we request will be retained on your device and is not collected by us in any way.</p>",
+      "<p>The app does use third party services that may collect information used to identify you.</p>",
+      "<p>Link to privacy policy of third party service providers used by the app:</p>",
+      "<ul><li>Google Play Services</li><li>AdMob</li><li>Google Analytics for Firebase</li><li>Firebase Crashlytics</li></ul>",
+      "<h4>Log Data</h4>",
+      "<p>We want to inform you that whenever you use our Service, in a case of an error in the app we collect data and information (through third party products) on your phone called Log Data. This Log Data may include information such as your device Internet Protocol (\"IP\") address, device name, operating system version, the configuration of the app when utilizing our Service, the time and date of your use of the Service, and other statistics.</p>",
+      "<h4>Cookies</h4>",
+      "<p>Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory.</p>",
+      "<p>This Service does not use these \"cookies\" explicitly. However, the app may use third party code and libraries that use \"cookies\" to collect information and improve their services. You have the option to either accept or refuse these cookies and know when a cookie is being sent to your device. If you choose to refuse our cookies, you may not be able to use some portions of this Service.</p>",
+      "<h4>Service Providers</h4>",
+      "<p>We may employ third-party companies and individuals due to the following reasons:</p>",
+      "<ul><li>To facilitate our Service;</li><li>To provide the Service on our behalf;</li><li>To perform Service-related services; or</li><li>To assist us in analyzing how our Service is used.</li></ul>",
+      "<p>We want to inform users of this Service that these third parties have access to your Personal Information. The reason is to perform the tasks assigned to them on our behalf. However, they are obligated not to disclose or use the information for any other purpose.</p>",
+      "<h4>Security</h4>",
+      "<p>BestBuy Affiliate Marketing app maker and makers are not responsible for any liability and damages. All responsibility belongs to the user. We value your trust in providing us your Personal Information, thus we are striving to use commercially acceptable means of protecting it. But remember that no method of transmission over the internet, or method of electronic storage is 100% secure and reliable, and we cannot guarantee its absolute security.</p>",
+      "<h4>Links to Other Sites</h4>",
+      "<p>This Service may contain links to other sites. If you click on a third-party link, you will be directed to that site. Note that these external sites are not operated by us. Therefore, we strongly advise you to review the Privacy Policy of these websites. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>",
+      "<h4>Children's Privacy</h4>",
+      "<p>These Services do not address anyone under the age of 13. We do not knowingly collect personally identifiable information from children under 13 years of age. In the case we discover that a child under 13 has provided us with personal information, we immediately delete this from our servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us so that we will be able to do necessary actions.</p>",
+      "<h4>Changes to This Privacy Policy</h4>",
+      "<p>We may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new Privacy Policy on this page.</p>",
+      "<p>This policy is effective as of 2021-11-01.</p>",
+      "<h4>Contact Us</h4>",
+      "<p>If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at daastudio42@gmail.com.</p>",
+      "<p>This privacy policy page was created at privacypolicytemplate.net and modified/generated by App Privacy Policy Generator.</p>"
+    ].join(""),
+    tr: [
+      "<p><strong>Gizlilik Politikası</strong></p>",
+      "<p>Daa Studio, BestBuy Affiliate Marketing uygulamasını ücretsiz bir uygulama olarak geliştirmiştir. Bu HİZMET, Daa Studio tarafından ücretsiz olarak sunulmaktadır ve olduğu gibi kullanılması amaçlanmıştır.</p>",
+      "<p>Bu sayfa, Hizmetimizi kullanmaya karar veren ziyaretçileri Kişisel Bilgilerin toplanması, kullanılması ve ifşa edilmesiyle ilgili politikalarımız hakkında bilgilendirmek için kullanılır.</p>",
+      "<p>Hizmetimizi kullanmayı seçerseniz, bu politikayla ilgili bilgilerin toplanmasına ve kullanılmasına onay vermiş olursunuz. Topladığımız Kişisel Bilgiler, Hizmeti sağlamak ve geliştirmek için kullanılır. Bilgilerinizi, bu Gizlilik Politikasında açıklananlar dışında kimseyle kullanmayız veya paylaşmayız.</p>",
+      "<p>Bu Gizlilik Politikasında kullanılan terimler, bu Gizlilik Politikasında aksi belirtilmediği sürece BestBuy Affiliate Marketing'de erişilebilen Kullanım Şartlarımızdaki anlamlarla aynıdır.</p>",
+      "<h4>Bilgi Toplama ve Kullanımı</h4>",
+      "<p>Daha iyi bir deneyim için Hizmetimizi kullanırken sizden belirli kişisel olarak tanımlanabilir bilgiler sağlamanızı isteyebiliriz. Talep ettiğimiz bilgiler cihazınızda saklanır ve tarafımızca hiçbir şekilde toplanmaz.</p>",
+      "<p>Uygulama, sizi tanımlamak için kullanılan bilgileri toplayabilecek üçüncü taraf hizmetleri kullanır.</p>",
+      "<p>Uygulama tarafından kullanılan üçüncü taraf hizmet sağlayıcılarının gizlilik politikası bağlantısı:</p>",
+      "<ul><li>Google Play Services</li><li>AdMob</li><li>Google Analytics for Firebase</li><li>Firebase Crashlytics</li></ul>",
+      "<h4>Günlük Verileri</h4>",
+      "<p>Hizmetimizi her kullandığınızda, uygulamada bir hata olması durumunda, telefonunuzda (üçüncü taraf ürünleri aracılığıyla) Günlük Verileri adı verilen veri ve bilgileri topladığımızı bilmenizi isteriz. Bu Günlük Verileri, cihazınızın İnternet Protokolü (\"IP\") adresi, cihaz adı, işletim sistemi sürümü, Hizmetimizi kullanırken uygulamanın yapılandırması, Hizmeti kullanım tarihiniz ve saatiniz ve diğer istatistikler gibi bilgileri içerebilir.</p>",
+      "<h4>Çerezler</h4>",
+      "<p>Çerezler, anonim benzersiz tanımlayıcılar olarak yaygın olarak kullanılan az miktarda veri içeren dosyalardır. Bu dosyalar, ziyaret ettiğiniz web sitelerinden tarayıcınıza gönderilir ve cihazınızın dahili belleğinde saklanır.</p>",
+      "<p>Bu Hizmet bu \"çerezleri\" açıkça kullanmaz. Ancak uygulama, bilgi toplamak ve hizmetlerini geliştirmek için \"çerez\" kullanan üçüncü taraf kod ve kitaplıkları kullanabilir. Bu çerezleri kabul etme veya reddetme ve cihazınıza çerez gönderildiğinde bilme seçeneğiniz vardır. Çerezlerimizi reddetmeyi seçerseniz, bu Hizmetin bazı bölümlerini kullanamayabilirsiniz.</p>",
+      "<h4>Hizmet Sağlayıcılar</h4>",
+      "<p>Aşağıdaki nedenlerle üçüncü taraf şirketler ve kişiler istihdam edebiliriz:</p>",
+      "<ul><li>Hizmetimizi kolaylaştırmak;</li><li>Hizmeti bizim adımıza sağlamak;</li><li>Hizmetle ilgili hizmetler gerçekleştirmek; veya</li><li>Hizmetimizin nasıl kullanıldığını analiz etmemize yardımcı olmak.</li></ul>",
+      "<p>Bu Hizmetin kullanıcılarına, bu üçüncü tarafların Kişisel Bilgilerinize erişimi olduğunu bildirmek isteriz. Bunun nedeni, bizim adımıza kendilerine verilen görevleri yerine getirmektir. Ancak, bilgileri başka herhangi bir amaçla ifşa etmemek veya kullanmamakla yükümlüdürler.</p>",
+      "<h4>Güvenlik</h4>",
+      "<p>BestBuy Affiliate Marketing uygulaması yapımcısı ve yapımcıları hiçbir sorumluluk ve zarardan sorumlu değildir. Tüm sorumluluk kullanıcıya aittir. Kişisel Bilgilerinizi bize sağlama konusundaki güveninize değer veriyoruz, bu nedenle ticari olarak kabul edilebilir koruma yöntemleri kullanmaya çalışıyoruz. Ancak, internet üzerinden hiçbir iletim yönteminin veya elektronik depolama yönteminin %100 güvenli ve güvenilir olmadığını ve mutlak güvenliğini garanti edemeyeceğimizi unutmayın.</p>",
+      "<h4>Diğer Sitelere Bağlantılar</h4>",
+      "<p>Bu Hizmet diğer sitelere bağlantılar içerebilir. Üçüncü taraf bir bağlantıya tıklarsanız, o siteye yönlendirilirsiniz. Bu harici sitelerin tarafımızca işletilmediğini unutmayın. Bu nedenle, bu web sitelerinin Gizlilik Politikasını incelemenizi şiddetle tavsiye ederiz. Herhangi bir üçüncü taraf sitenin veya hizmetin içeriği, gizlilik politikaları veya uygulamaları üzerinde hiçbir kontrolümüz yoktur ve hiçbir sorumluluk kabul etmiyoruz.</p>",
+      "<h4>Çocukların Gizliliği</h4>",
+      "<p>Bu Hizmetler 13 yaşın altındaki hiç kimseye hitap etmez. 13 yaşın altındaki çocuklardan bilerek kişisel olarak tanımlanabilir bilgi toplamıyoruz. 13 yaşın altındaki bir çocuğun bize kişisel bilgi verdiğini keşfedersek, bunu sunucularımızdan derhal sileriz. Bir ebeveyn veya vasi iseniz ve çocuğunuzun bize kişisel bilgi verdiğini biliyorsanız, gerekli işlemleri yapabilmemiz için lütfen bizimle iletişime geçin.</p>",
+      "<h4>Bu Gizlilik Politikasındaki Değişiklikler</h4>",
+      "<p>Gizlilik Politikamızı zaman zaman güncelleyebiliriz. Bu nedenle, herhangi bir değişiklik için bu sayfayı periyodik olarak incelemeniz önerilir. Yeni Gizlilik Politikasını bu sayfada yayınlayarak herhangi bir değişiklikten sizi haberdar edeceğiz.</p>",
+      "<p>Bu politika 2021-11-01 tarihinden itibaren geçerlidir.</p>",
+      "<h4>Bize Ulaşın</h4>",
+      "<p>Gizlilik Politikamız hakkında herhangi bir sorunuz veya öneriniz varsa, daastudio42@gmail.com adresinden bizimle iletişime geçmekten çekinmeyin.</p>",
+      "<p>Bu gizlilik politikası sayfası privacypolicytemplate.net'te oluşturulmuş ve App Privacy Policy Generator tarafından değiştirilmiş/oluşturulmuştur.</p>"
+    ].join("")
+  };
+
+  /* ============ TERMS & CONDITIONS (localized) ============ */
+  var TERMS = {
+    en: [
+      "<p><strong>Terms & Conditions</strong></p>",
+      "<p>By downloading or using the app, these terms will automatically apply to you – you should make sure therefore that you read them carefully before using the app. BestBuy Affiliate Marketing app maker and makers are not responsible for any liability and damages. All responsibility belongs to the user. You're not allowed to copy, or modify the app, any part of the app, or our trademarks in any way. You're not allowed to attempt to extract the source code of the app, and you also shouldn't try to translate the app into other languages, or make derivative versions. The app itself, and all the trade marks, copyright, database rights and other intellectual property rights related to it, still belong to Daa Studio.</p>",
+      "<p>Daa Studio is committed to ensuring that the app is as useful and efficient as possible. For that reason, we reserve the right to make changes to the app or to charge for its services, at any time and for any reason. We will never charge you for the app or its services without making it very clear to you exactly what you're paying for.</p>",
+      "<p>The BestBuy Affiliate Marketing app stores and processes personal data that you have provided to us, in order to provide our Service. It's your responsibility to keep your phone and access to the app secure. We therefore recommend that you do not jailbreak or root your phone, which is the process of removing software restrictions and limitations imposed by the official operating system of your device. It could make your phone vulnerable to malware/viruses/malicious programs, compromise your phone's security features and it could mean that the BestBuy Affiliate Marketing app won't work properly or at all.</p>",
+      "<p>The app does use third party services that declare their own Terms and Conditions.</p>",
+      "<p>Link to Terms and Conditions of third party service providers used by the app:</p>",
+      "<ul><li>Google Play Services</li><li>AdMob</li><li>Google Analytics for Firebase</li><li>Firebase Crashlytics</li></ul>",
+      "<p>You should be aware that there are certain things that Daa Studio will not take responsibility for. Certain functions of the app will require the app to have an active internet connection. The connection can be Wi-Fi, or provided by your mobile network provider, but Daa Studio cannot take responsibility for the app not working at full functionality if you don't have access to Wi-Fi, and you don't have any of your data allowance left.</p>",
+      "<p>If you're using the app outside of an area with Wi-Fi, you should remember that your terms of the agreement with your mobile network provider will still apply. As a result, you may be charged by your mobile provider for the cost of data for the duration of the connection while accessing the app, or other third party charges. In using the app, you're accepting responsibility for any such charges, including roaming data charges if you use the app outside of your home territory (i.e. region or country) without turning off data roaming. If you are not the bill payer for the device on which you're using the app, please be aware that we assume that you have received permission from the bill payer for using the app.</p>",
+      "<p>Along the same lines, Daa Studio cannot always take responsibility for the way you use the app i.e. You need to make sure that your device stays charged – if it runs out of battery and you can't turn it on to avail the Service, Daa Studio cannot accept responsibility.</p>",
+      "<p>With respect to Daa Studio's responsibility for your use of the app, when you're using the app, it's important to bear in mind that although we endeavour to ensure that it is updated and correct at all times, we do rely on third parties to provide information to us so that we can make it available to you. Daa Studio accepts no liability for any loss, direct or indirect, you experience as a result of relying wholly on this functionality of the app.</p>",
+      "<p>At some point, we may wish to update the app. The app is currently available on Android – the requirements for system (and for any additional systems we decide to extend the availability of the app to) may change, and you'll need to download the updates if you want to keep using the app. Daa Studio does not promise that it will always update the app so that it is relevant to you and/or works with the Android version that you have installed on your device. However, you promise to always accept updates to the application when offered to you. We may also wish to stop providing the app, and may terminate use of it at any time without giving notice of termination to you. Unless we tell you otherwise, upon any termination, (a) the rights and licenses granted to you in these terms will end; (b) you must stop using the app, and (if needed) delete it from your device.</p>",
+      "<h4>Changes to This Terms and Conditions</h4>",
+      "<p>We may update our Terms and Conditions from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new Terms and Conditions on this page.</p>",
+      "<p>These terms and conditions are effective as of 2021-11-01.</p>",
+      "<h4>Contact Us</h4>",
+      "<p>If you have any questions or suggestions about our Terms and Conditions, do not hesitate to contact us at daastudio42@gmail.com.</p>",
+      "<p>This Terms and Conditions page was generated by App Privacy Policy Generator.</p>"
+    ].join(""),
+    tr: [
+      "<p><strong>Kullanım Şartları</strong></p>",
+      "<p>Uygulamayı indirerek veya kullanarak, bu şartlar otomatik olarak sizin için geçerli olacaktır – bu nedenle uygulamayı kullanmadan önce dikkatlice okuduğunuzdan emin olmalısınız. BestBuy Affiliate Marketing uygulaması yapımcısı ve yapımcıları hiçbir sorumluluk ve zarardan sorumlu değildir. Tüm sorumluluk kullanıcıya aittir. Uygulamayı, uygulamanın herhangi bir bölümünü veya ticari markalarımızı hiçbir şekilde kopyalama veya değiştirme izniniz yoktur. Uygulamanın kaynak kodunu çıkarmaya çalışmanıza izin verilmez ve ayrıca uygulamayı başka dillere çevirmeye veya türev sürümler oluşturmaya çalışmamalısınız. Uygulamanın kendisi ve onunla ilgili tüm ticari markalar, telif hakkı, veritabanı hakları ve diğer fikri mülkiyet hakları hala Daa Studio'ya aittir.</p>",
+      "<p>Daa Studio, uygulamanın mümkün olduğunca kullanışlı ve verimli olmasını sağlamayı taahhüt eder. Bu nedenle, herhangi bir zamanda ve herhangi bir nedenle uygulamada değişiklik yapma veya hizmetleri için ücret alma hakkımızı saklı tutarız. Ne için ödeme yaptığınızı size açıkça belirtmeden uygulama veya hizmetleri için sizden asla ücret almayız.</p>",
+      "<p>BestBuy Affiliate Marketing uygulaması, Hizmetimizi sağlamak için bize sağladığınız kişisel verileri saklar ve işler. Telefonunuzu ve uygulamaya erişimi güvende tutmak sizin sorumluluğunuzdadır. Bu nedenle, cihazınızın resmi işletim sistemi tarafından uygulanan yazılım kısıtlamalarını ve sınırlamalarını kaldırma işlemi olan telefonunuzu jailbreak veya root yapmamanızı öneririz. Telefonunuzu kötü amaçlı yazılımlara/virüslere/kötü amaçlı programlara karşı savunmasız bırakabilir, telefonunuzun güvenlik özelliklerini tehlikeye atabilir ve BestBuy Affiliate Marketing uygulamasının düzgün çalışmamasına veya hiç çalışmamasına neden olabilir.</p>",
+      "<p>Uygulama, kendi Kullanım Şartlarını beyan eden üçüncü taraf hizmetleri kullanır.</p>",
+      "<p>Uygulama tarafından kullanılan üçüncü taraf hizmet sağlayıcılarının Kullanım Şartları bağlantısı:</p>",
+      "<ul><li>Google Play Services</li><li>AdMob</li><li>Google Analytics for Firebase</li><li>Firebase Crashlytics</li></ul>",
+      "<p>Daa Studio'nun sorumluluk almayacağı bazı şeyler olduğunu bilmelisiniz. Uygulamanın belirli işlevleri, uygulamanın aktif bir internet bağlantısına sahip olmasını gerektirecektir. Bağlantı Wi-Fi olabilir veya mobil ağ sağlayıcınız tarafından sağlanabilir, ancak Daa Studio, Wi-Fi'ye erişiminiz yoksa ve veri ödeneğiniz kalmadıysa uygulamanın tam işlevsellikte çalışmamasından sorumlu tutulamaz.</p>",
+      "<p>Uygulamayı Wi-Fi olan bir alanın dışında kullanıyorsanız, mobil ağ sağlayıcınızla yaptığınız anlaşmanın şartlarının hala geçerli olacağını unutmamalısınız. Sonuç olarak, uygulamaya erişirken bağlantı süresi boyunca veri maliyeti için mobil sağlayıcınız tarafından veya diğer üçüncü taraf ücretler için ücretlendirilebilirsiniz. Uygulamayı kullanarak, veri dolaşımını kapatmadan ev bölgeniz (yani bölge veya ülke) dışında uygulamayı kullanırsanız dolaşım veri ücretleri de dahil olmak üzere bu tür ücretlerin sorumluluğunu kabul edersiniz. Uygulamayı kullandığınız cihazın fatura ödeyen kişisi değilseniz, uygulamayı kullanmak için fatura ödeyen kişiden izin aldığınızı varsaydığımızı lütfen unutmayın.</p>",
+      "<p>Aynı doğrultuda, Daa Studio uygulamayı kullanma şeklinizden her zaman sorumlu tutulamaz, yani cihazınızın şarjlı kalmasını sağlamalısınız – pili biterse ve Hizmetten yararlanmak için açamazsanız, Daa Studio sorumluluk kabul edemez.</p>",
+      "<p>Daa Studio'nun uygulamayı kullanımınıza ilişkin sorumluluğuyla ilgili olarak, uygulamayı kullanırken, her zaman güncel ve doğru olduğundan emin olmaya çalışsak da, size sunabilmemiz için bilgi sağlamak üzere üçüncü taraflara güvendiğimizi unutmamak önemlidir. Daa Studio, uygulamanın bu işlevselliğine tamamen güvenmeniz sonucunda yaşadığınız doğrudan veya dolaylı herhangi bir kayıp için hiçbir sorumluluk kabul etmez.</p>",
+      "<p>Bir noktada uygulamayı güncellemek isteyebiliriz. Uygulama şu anda Android'de mevcuttur – sistem gereksinimleri (ve uygulamanın kullanılabilirliğini genişletmeye karar verdiğimiz diğer sistemler için) değişebilir ve uygulamayı kullanmaya devam etmek istiyorsanız güncellemeleri indirmeniz gerekecektir. Daa Studio, uygulamayı her zaman sizin için alakalı olacak şekilde ve/veya cihazınızda yüklü olan Android sürümüyle çalışacak şekilde güncelleyeceğini taahhüt etmez. Ancak, size sunulduğunda uygulamaya yapılan güncellemeleri her zaman kabul etmeyi taahhüt edersiniz. Ayrıca uygulamayı sağlamayı durdurmak isteyebiliriz ve size sonlandırma bildirimi yapmadan herhangi bir zamanda kullanımını sonlandırabiliriz. Aksini söylemediğimiz sürece, herhangi bir sonlandırma üzerine, (a) bu şartlarda size verilen haklar ve lisanslar sona erecek; (b) uygulamayı kullanmayı bırakmalı ve (gerekirse) cihazınızdan silmelisiniz.</p>",
+      "<h4>Bu Kullanım Şartlarındaki Değişiklikler</h4>",
+      "<p>Kullanım Şartlarımızı zaman zaman güncelleyebiliriz. Bu nedenle, herhangi bir değişiklik için bu sayfayı periyodik olarak incelemeniz önerilir. Yeni Kullanım Şartlarını bu sayfada yayınlayarak herhangi bir değişiklikten sizi haberdar edeceğiz.</p>",
+      "<p>Bu şartlar ve koşullar 2021-11-01 tarihinden itibaren geçerlidir.</p>",
+      "<h4>Bize Ulaşın</h4>",
+      "<p>Kullanım Şartlarımız hakkında herhangi bir sorunuz veya öneriniz varsa, daastudio42@gmail.com adresinden bizimle iletişime geçmekten çekinmeyin.</p>",
+      "<p>Bu Kullanım Şartları sayfası App Privacy Policy Generator tarafından oluşturulmuştur.</p>"
+    ].join("")
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  /* ============ THEME ============ */
+  var currentTheme = "dark";
+  try { currentTheme = localStorage.getItem("theme") || "dark"; } catch (e) {}
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    currentTheme = theme;
+    var sw = $("themeSwitch");
+    if (sw) sw.classList.toggle("on", theme === "dark");
+    try { localStorage.setItem("theme", theme); } catch (e) {}
+  }
+  $("themeSwitch").addEventListener("click", function () {
+    applyTheme(currentTheme === "dark" ? "light" : "dark");
+  });
+  applyTheme(currentTheme);
+
+  /* ============ LANGUAGE ============ */
+  var currentLang = "en";
+  try { currentLang = localStorage.getItem("lang") || "en"; } catch (e) {}
+  if (!I18N[currentLang]) currentLang = "en";
+
+  function applyLang(lang) {
+    if (!I18N[lang]) lang = "en";
+    currentLang = lang;
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n");
+      if (I18N[lang][key] !== undefined) el.textContent = I18N[lang][key];
+    });
+
+    document.querySelectorAll(".lang-option").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-lang") === lang);
+    });
+
+    $("toast").textContent = I18N[lang].copied;
+
+    /* Update privacy and terms content */
+    var priv = PRIVACY[lang] || PRIVACY.en;
+    var term = TERMS[lang] || TERMS.en;
+    $("privacyBody").innerHTML = priv;
+    $("termsBody").innerHTML = term;
+
+    renderPromoList();
+  }
+
+  /* Build language grid */
+  var langGrid = $("langGrid");
+  LANGS.forEach(function (L) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "lang-option";
+    b.setAttribute("data-lang", L.code);
+    b.innerHTML = '<span class="flag">' + L.flag + '</span><span>' + L.label + '</span>';
+    b.addEventListener("click", function () { applyLang(L.code); });
+    langGrid.appendChild(b);
+  });
+
+  /* ============ RENDER CATEGORIES (row style with share) ============ */
+  var catList = $("catList");
+  CATEGORIES.forEach(function (cat) {
+    var row = document.createElement("a");
+    row.className = "cat-row";
+    row.href = cat.url;
+    row.target = "_blank";
+    row.rel = "noopener noreferrer";
+
+    var icon = document.createElement("div");
+    icon.className = "cat-icon"; icon.textContent = cat.icon;
+
+    var name = document.createElement("div");
+    name.className = "cat-name"; name.textContent = cat.name;
+
+    var arrow = document.createElement("span");
+    arrow.className = "cat-arrow"; arrow.textContent = "↗";
+
+    var shareBtn = document.createElement("button");
+    shareBtn.type = "button";
+    shareBtn.className = "share-btn";
+    shareBtn.setAttribute("aria-label", "Share");
+    shareBtn.textContent = "📤";
+    shareBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      copyToClipboard(cat.url, function () {
+        showToast(I18N[currentLang].shareCopied);
+      });
+    });
+
+    row.appendChild(icon);
+    row.appendChild(name);
+    row.appendChild(arrow);
+    row.appendChild(shareBtn);
+    catList.appendChild(row);
+  });
+
+  /* ============ RENDER PROMO LIST ============ */
+  function renderPromoList() {
+    var list = $("promoList");
+    if (!list) return;
+    list.innerHTML = "";
+
+    if (!PROMO_CODES || PROMO_CODES.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "promo-empty";
+      empty.innerHTML =
+        '<div class="promo-empty-icon">🎟️</div>' +
+        '<h3>' + I18N[currentLang].promoEmptyTitle + '</h3>' +
+        '<p>' + I18N[currentLang].promoEmptyText + '</p>';
+      list.appendChild(empty);
+      return;
+    }
+
+    PROMO_CODES.forEach(function (p) {
+      var card = document.createElement("div");
+      card.className = "promo-item";
+      var h = document.createElement("h4");
+      h.textContent = p.title || "Promo";
+      var d = document.createElement("p");
+      d.textContent = p.desc || "";
+      var box = document.createElement("div");
+      box.className = "promo-code-box";
+      var code = document.createElement("div");
+      code.className = "promo-code";
+      code.textContent = p.code || "—";
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-btn";
+      btn.innerHTML = '📋 <span>' + I18N[currentLang].promoCopy + '</span>';
+      btn.addEventListener("click", function () {
+        copyToClipboard(p.code, function () {
+          btn.classList.add("copied");
+          showToast(I18N[currentLang].copied);
+          setTimeout(function () { btn.classList.remove("copied"); }, 1800);
+        });
+      });
+      box.appendChild(code);
+      box.appendChild(btn);
+      card.appendChild(h);
+      if (p.desc) card.appendChild(d);
+      card.appendChild(box);
+      list.appendChild(card);
+    });
+  }
+
+  /* ============ STARS ============ */
+  var PLAY_URL = "https://play.google.com/store/apps/details?id=com.DaaStudio.BestBuyAffiliate";
+  var stars = Array.prototype.slice.call(document.querySelectorAll("#stars .star"));
+
+  function paintStars(v) {
+    stars.forEach(function (s) {
+      s.classList.toggle("lit", parseInt(s.getAttribute("data-v"), 10) <= v);
+    });
+  }
+  stars.forEach(function (star) {
+    var v = parseInt(star.getAttribute("data-v"), 10);
+    star.addEventListener("mouseenter", function () {
+      stars.forEach(function (s) {
+        s.classList.toggle("hovered", parseInt(s.getAttribute("data-v"), 10) <= v);
+      });
+    });
+    star.addEventListener("mouseleave", function () {
+      stars.forEach(function (s) { s.classList.remove("hovered"); });
+    });
+    star.addEventListener("click", function () {
+      paintStars(v);
+      setTimeout(function () { window.open(PLAY_URL, "_blank"); }, 280);
+    });
+  });
+
+  /* ============ COPY HELPERS ============ */
+  function copyToClipboard(text, cb) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(cb).catch(function () { fbCopy(text, cb); });
+    } else {
+      fbCopy(text, cb);
+    }
+  }
+  function fbCopy(text, cb) {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+    if (cb) cb();
+  }
+
+  var toast = $("toast");
+  function showToast(msg) {
+    if (msg) toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(function () { toast.classList.remove("show"); }, 2000);
+  }
+
+  var copyBtn = $("copyBtn");
+  copyBtn.addEventListener("click", function () {
+    copyToClipboard("daastudio42@gmail.com", function () {
+      copyBtn.classList.add("copied");
+      showToast(I18N[currentLang].copied);
+      setTimeout(function () { copyBtn.classList.remove("copied"); }, 1800);
+    });
+  });
+
+  /* ============ MODALS ============ */
+  function openModal(name) {
+    var el = $(name + "Modal");
+    if (el) el.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeModal(name) {
+    var el = $(name + "Modal");
+    if (el) el.classList.remove("open");
+    if (!document.querySelector(".modal-overlay.open")) {
+      document.body.style.overflow = "";
+    }
+  }
+
+  $("settingsBtn").addEventListener("click", function () { openModal("settings"); });
+
+  document.querySelectorAll("[data-close]").forEach(function (b) {
+    b.addEventListener("click", function () { closeModal(b.getAttribute("data-close")); });
+  });
+
+  document.querySelectorAll(".legal-btn").forEach(function (b) {
+    b.addEventListener("click", function () { openModal(b.getAttribute("data-modal")); });
+  });
+
+  document.querySelectorAll(".modal-overlay").forEach(function (ov) {
+    ov.addEventListener("click", function (e) {
+      if (e.target === ov) {
+        ov.classList.remove("open");
+        if (!document.querySelector(".modal-overlay.open")) {
+          document.body.style.overflow = "";
+        }
+      }
+    });
+  });
+
+  /* ============ PAGE SWITCHING ============ */
+  var pages = { home: "page-home", promo: "page-promo", info: "page-info" };
+
+  function showPage(name) {
+    if (!pages[name]) name = "home";
+    Object.keys(pages).forEach(function (k) {
+      var el = $(pages[k]);
+      if (el) el.classList.toggle("active", k === name);
+    });
+    document.querySelectorAll(".nav-item").forEach(function (n) {
+      n.classList.toggle("active", n.getAttribute("data-page") === name);
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.querySelectorAll(".nav-item").forEach(function (item) {
+    item.addEventListener("click", function () {
+      showPage(item.getAttribute("data-page"));
+    });
+  });
+
+  /* ============ INIT ============ */
+  applyLang(currentLang);
+})();
+</script>
+</body>
+</html>
