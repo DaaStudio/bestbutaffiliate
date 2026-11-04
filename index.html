@@ -50,7 +50,6 @@
     padding-bottom: 90px;
   }
 
-  /* ---- Animated background ---- */
   .bg-anim {
     position: fixed; inset: 0; z-index: -1; overflow: hidden;
     background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
@@ -88,7 +87,6 @@
     50% { transform: translate(-30%,-70%) scale(1.2); }
   }
 
-  /* ---- Header ---- */
   header {
     position: sticky; top:0; z-index: 50;
     backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -119,12 +117,10 @@
   .icon-btn:active { transform: scale(0.9); }
   .icon-btn:hover { background: var(--card-hover); }
 
-  /* ---- Pages ---- */
   .page { display: none; }
   .page.active { display: block; animation: fadeIn .25s ease; }
   @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
 
-  /* ---- Hero ---- */
   .hero {
     padding: 34px 20px 20px;
     text-align:center;
@@ -140,7 +136,6 @@
   }
   .hero p { color: var(--text-dim); font-size:.92rem; max-width: 520px; margin: 0 auto; line-height:1.55; }
 
-  /* ---- Container ---- */
   .container { max-width: 1100px; margin: 0 auto; padding: 0 14px 40px; }
   .section-title {
     display:flex; align-items:center; gap:10px;
@@ -152,7 +147,6 @@
     background: linear-gradient(var(--accent), var(--accent2));
   }
 
-  /* ---- Category list ---- */
   .cat-list { display:flex; flex-direction:column; gap: 9px; }
   .cat-row {
     display:flex; align-items:center; gap: 12px;
@@ -160,7 +154,7 @@
     border-radius: 14px; padding: 12px 14px;
     text-decoration:none; color: var(--text);
     transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
-    position:relative;
+    position:relative; cursor:pointer;
   }
   .cat-row:hover, .cat-row:active {
     transform: translateY(-2px);
@@ -185,7 +179,6 @@
   .share-btn:hover { border-color: var(--accent2); }
   .share-btn:active { transform: scale(0.88); }
 
-  /* ---- Promo page ---- */
   .promo-empty {
     text-align:center; padding: 60px 20px;
     background: var(--card); border:1px dashed var(--border);
@@ -213,7 +206,6 @@
     letter-spacing:.08em; word-break:break-all;
   }
 
-  /* ---- Info blocks ---- */
   .info-block { margin-bottom: 26px; }
   .info-block:last-child { margin-bottom: 0; }
   .info-block-title {
@@ -228,7 +220,6 @@
     border-radius: 16px; padding: 18px;
   }
 
-  /* Rating */
   .rating-card { text-align:center; }
   .rating-card .sub { color: var(--text-dim); font-size:.88rem; margin-bottom:16px; }
   .stars { display:flex; justify-content:center; gap:10px; font-size:2.2rem; line-height:1; margin: 4px 0 18px; }
@@ -252,7 +243,6 @@
   }
   .rate-btn:active { transform: scale(0.95); }
 
-  /* Contact */
   .contact-row { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
   .contact-left { display:flex; align-items:center; gap:10px; min-width:0; flex:1 1 160px; }
   .contact-icon {
@@ -275,7 +265,6 @@
   .copy-btn:active { transform: scale(0.93); }
   .copy-btn.copied { background: var(--success); color:#fff; border-color: var(--success); }
 
-  /* Important */
   .important-card {
     border:1px solid rgba(245,158,11,0.45);
     background: rgba(245,158,11,0.08);
@@ -290,7 +279,6 @@
   .important-card p { font-size:.88rem; line-height:1.6; color: var(--text); }
   .important-card p b { color: var(--accent); }
 
-  /* Legal */
   .legal-links { display:flex; gap:10px; flex-wrap:wrap; }
   .legal-btn {
     flex:1; min-width:130px; padding: 14px;
@@ -303,7 +291,6 @@
   .legal-btn:hover { background: var(--card-hover); border-color: var(--accent2); }
   .legal-btn:active { transform: scale(0.97); }
 
-  /* ---- Bottom nav ---- */
   .bottom-nav {
     position: fixed; bottom: 0; left:0; right:0; z-index: 55;
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -322,7 +309,6 @@
   .nav-item.active { color: var(--accent); }
   .nav-item:active { transform: scale(0.92); }
 
-  /* ---- Settings ---- */
   .settings-section { margin-bottom: 24px; }
   .settings-section:last-child { margin-bottom: 0; }
   .settings-label {
@@ -366,7 +352,6 @@
   }
   .lang-option .flag { font-size:1.15rem; line-height:1; }
 
-  /* ---- Modal ---- */
   .modal-overlay {
     position: fixed; inset:0;
     background: rgba(0,0,0,0.65);
@@ -409,7 +394,6 @@
   .modal-body li { margin-bottom: 5px; }
   .modal-body strong { color: var(--text); }
 
-  /* ---- Toast ---- */
   .toast {
     position: fixed; bottom: 95px; left: 50%;
     transform: translateX(-50%) translateY(80px);
@@ -601,34 +585,34 @@
 (function () {
   "use strict";
 
-  /* ============ CATEGORY DATA ============ */
+  /* ============ CATEGORY DATA (with FULL bestbuy.com URLs + irclickid) ============ */
   var CATEGORIES = [
-    { name: "Home", icon: "🏠", url: "https://bestbuy.7tiv.net/zN9e60" },
-    { name: "Best Buy Outlet", icon: "🏷️", url: "https://bestbuy.7tiv.net/5g7Qxj" },
-    { name: "Deal of the Day", icon: "🔥", url: "https://bestbuy.7tiv.net/DKkg1j" },
-    { name: "Gift Cards", icon: "🎁", url: "https://bestbuy.7tiv.net/eKAMbr" },
-    { name: "Gift Ideas", icon: "💡", url: "https://bestbuy.7tiv.net/jrO3B5" },
-    { name: "My Best Buy Memberships", icon: "⭐", url: "https://bestbuy.7tiv.net/rQ23BQ" },
-    { name: "Top Deals", icon: "🏆", url: "https://bestbuy.7tiv.net/LXZqrj" },
-    { name: "Yes Best Buy Sells That", icon: "🛍️", url: "https://bestbuy.7tiv.net/eKPAoO" },
-    { name: "Apple", icon: "🍎", url: "https://bestbuy.7tiv.net/LX3m4V" },
-    { name: "Cameras - Camcorders", icon: "📷", url: "https://bestbuy.7tiv.net/PyNVRR" },
-    { name: "Cell Phones", icon: "📱", url: "https://bestbuy.7tiv.net/DKzen5" },
-    { name: "Electric Transportation", icon: "🛴", url: "https://bestbuy.7tiv.net/2195yA" },
-    { name: "Exclusive Member Deals", icon: "💎", url: "https://bestbuy.7tiv.net/5gPZYb" },
-    { name: "Floor Care - Home Air Quality", icon: "🧹", url: "https://bestbuy.7tiv.net/0ZDjyN" },
-    { name: "Headphones", icon: "🎧", url: "https://bestbuy.7tiv.net/jrAyZM" },
-    { name: "Laptops - Computers", icon: "💻", url: "https://bestbuy.7tiv.net/EKveJW" },
-    { name: "Major Appliances", icon: "🔌", url: "https://bestbuy.7tiv.net/m5VEZ7" },
-    { name: "PC Gaming", icon: "🎮", url: "https://bestbuy.7tiv.net/eKPEe1" },
-    { name: "Small Kitchen Appliances", icon: "🍳", url: "https://bestbuy.7tiv.net/1rQPyz" },
-    { name: "Smart Home - Security - Wi-Fi", icon: "🏡", url: "https://bestbuy.7tiv.net/oqZL5W" },
-    { name: "Sound Bars - Speakers", icon: "🔊", url: "https://bestbuy.7tiv.net/zN23D6" },
-    { name: "Tablets", icon: "📲", url: "https://bestbuy.7tiv.net/DKzeOb" },
-    { name: "Toys - Games - Collectibles", icon: "🧸", url: "https://bestbuy.7tiv.net/vNqjQL" },
-    { name: "TVs - Projectors", icon: "📺", url: "https://bestbuy.7tiv.net/2195M0" },
-    { name: "Video Games - VR", icon: "🕹️", url: "https://bestbuy.7tiv.net/75kOoY" },
-    { name: "Wearable Technology", icon: "⌚", url: "https://bestbuy.7tiv.net/anQAjY" }
+    { name: "Home", icon: "🏠", url: "https://www.bestbuy.com/?irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy1IPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Best Buy Outlet", icon: "🏷️", url: "https://www.bestbuy.com/site/electronics/outlet-refurbished-clearance/pcmcat142300050026.c?id=pcmcat142300050026&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy1YPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Deal of the Day", icon: "🔥", url: "https://www.bestbuy.com/site/misc/deal-of-the-day/pcmcat248000050016.c?id=pcmcat248000050016&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy18PQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Gift Cards", icon: "🎁", url: "https://www.bestbuy.com/site/electronics/gift-cards/cat09000.c?id=cat09000&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy14PQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Gift Ideas", icon: "💡", url: "https://www.bestbuy.com/site/electronics/gift-ideas/abcat0010000.c?id=abcat0010000&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy30PQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "My Best Buy Memberships", icon: "⭐", url: "https://www.bestbuy.com/site/electronics/best-buy-membership/pcmcat1679668833285.c?id=pcmcat1679668833285&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy30PQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Top Deals", icon: "🏆", url: "https://www.bestbuy.com/site/electronics/top-deals/pcmcat1563299784494.c?id=pcmcat1563299784494&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3wPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Yes Best Buy Sells That", icon: "🛍️", url: "https://www.bestbuy.com/site/misc/yes-best-buy-sells-that/pcmcat1621542998180.c?id=pcmcat1621542998180&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3kPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Apple", icon: "🍎", url: "https://www.bestbuy.com/site/top-deals/apple-deals/pcmcat1563304364690.c?id=pcmcat1563304364690&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3kPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Cameras - Camcorders", icon: "📷", url: "https://www.bestbuy.com/site/top-deals/cameras-camcorders-deals/pcmcat1563303693778.c?id=pcmcat1563303693778&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3gPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Cell Phones", icon: "📱", url: "https://www.bestbuy.com/site/top-deals/cell-phone-deals/pcmcat1563302848653.c?id=pcmcat1563302848653&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3EPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Electric Transportation", icon: "🛴", url: "https://www.bestbuy.com/site/top-deals/seasonal-deals/pcmcat1575646065111.c?id=pcmcat1575646065111&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3APQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Exclusive Member Deals", icon: "💎", url: "https://www.bestbuy.com/site/top-deals/member-exclusive-deals/pcmcat1651770167686.c?id=pcmcat1651770167686&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3sPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Floor Care - Home Air Quality", icon: "🧹", url: "https://www.bestbuy.com/site/top-deals/floor-care-home-air-deals/pcmcat1563301751801.c?id=pcmcat1563301751801&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3sPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Headphones", icon: "🎧", url: "https://www.bestbuy.com/site/top-deals/headphone-deals/pcmcat1563303313934.c?id=pcmcat1563303313934&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3oPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Laptops - Computers", icon: "💻", url: "https://www.bestbuy.com/site/top-deals/computer-tablet-deals/pcmcat1563302961332.c?id=pcmcat1563302961332&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3MPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Major Appliances", icon: "🔌", url: "https://www.bestbuy.com/site/top-deals/major-appliance-deals/pcmcat1563300667320.c?id=pcmcat1563300667320&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3YPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "PC Gaming", icon: "🎮", url: "https://www.bestbuy.com/site/top-deals/pc-gaming-deals/pcmcat1563303062730.c?id=pcmcat1563303062730&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy3YPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Small Kitchen Appliances", icon: "🍳", url: "https://www.bestbuy.com/site/top-deals/small-appliance-deals/pcmcat1563301508502.c?id=pcmcat1563301508502&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy34PQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Smart Home - Security - Wi-Fi", icon: "🏡", url: "https://www.bestbuy.com/site/top-deals/smart-home-deals/pcmcat1563302233796.c?id=pcmcat1563302233796&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyy34PQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Sound Bars - Speakers", icon: "🔊", url: "https://www.bestbuy.com/site/top-deals/sound-bar-speaker-deals/pcmcat1563303192128.c?id=pcmcat1563303192128&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0Ukryyyy0PQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Tablets", icon: "📲", url: "https://www.bestbuy.com/site/top-deals/tablet-deals/pcmcat1620932158301.c?id=pcmcat1620932158301&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0UkryyyywPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Toys - Games - Collectibles", icon: "🧸", url: "https://www.bestbuy.com/site/top-deals/toy-deals/pcmcat1563554765234.c?id=pcmcat1563554765234&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0UkryyyyUPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "TVs - Projectors", icon: "📺", url: "https://www.bestbuy.com/site/top-deals/tv-deals/pcmcat1563300475775.c?id=pcmcat1563300475775&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0UkryyyyUPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Video Games - VR", icon: "🕹️", url: "https://www.bestbuy.com/site/top-deals/video-game-deals/pcmcat1563303954606.c?id=pcmcat1563303954606&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0UkryyyykPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" },
+    { name: "Wearable Technology", icon: "⌚", url: "https://www.bestbuy.com/site/top-deals/wearable-technology-deals/pcmcat1563303510161.c?id=pcmcat1563303510161&irclickid=0K60JmVuDxyZU%3AwyviWbOQ-0UkryyyygPQkrXc0&irgwc=1&afsrc=1&ref=198&loc=DaaStudio&acampID=&mpid=3678565&affgroup=%22Deal%200.5%25%22%2C%22Deals%22" }
   ];
 
   /* ============ PROMO CODES ============ */
@@ -1141,12 +1125,8 @@
 
   function $(id) { return document.getElementById(id); }
 
-  /* ============ OPEN PLAY STORE (WebView safe, no unknown scheme) ============ */
+  /* ============ OPEN PLAY STORE ============ */
   function openPlayStore() {
-    // Sadece https URL kullanıyoruz — ERR_UNKNOWN_URL_SCHEME çıkmaz.
-    // Native WebView'in shouldOverrideUrlLoading'inde bu URL'yi yakalayıp
-    // Android Intent ile Play Store uygulamasında açabilirsiniz.
-    // JS tarafı için en güvenli yol burasıdır.
     window.location.href = PLAY_URL;
   }
 
@@ -1196,7 +1176,6 @@
     renderPromoList();
   }
 
-  /* Build language grid */
   var langGrid = $("langGrid");
   LANGS.forEach(function (L) {
     var b = document.createElement("button");
@@ -1211,10 +1190,6 @@
   /* ============ RENDER CATEGORIES ============ */
   var catList = $("catList");
   CATEGORIES.forEach(function (cat) {
-    // ÖNEMLİ: target="_blank" KULLANMIYORUZ.
-    // WebView'de target="_blank" ERR_UNKNOWN_URL_SCHEME hatasına yol açabiliyor.
-    // Link aynı WebView içinde açılsın; native taraf shouldOverrideUrlLoading
-    // ile harici domaini yakalayıp sistem tarayıcısında açabilir.
     var row = document.createElement("a");
     row.className = "cat-row";
     row.href = cat.url;
@@ -1322,7 +1297,6 @@
     });
   });
 
-  /* Rate button */
   $("rateBtn").addEventListener("click", function (e) {
     e.preventDefault();
     openPlayStore();
